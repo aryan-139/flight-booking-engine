@@ -6,6 +6,7 @@ const router = Router();
 
 // API routes
 router.use('/api', helloRoutes);
+//router.use('/api/auth', authRoutes);
 router.use('/api/admin', adminRoutes);
 
 // Root route
