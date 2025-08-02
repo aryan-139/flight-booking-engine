@@ -1,6 +1,13 @@
+// config/database.ts
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+export const supabaseConfig = {
+    url: process.env.SUPABASE_URL || '',
+    anonKey: process.env.SUPABASE_ANON_KEY || '',
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+};
 
 export const databaseConfig = {
     host: process.env.DB_HOST || 'localhost',
@@ -17,10 +24,3 @@ export const databaseConfig = {
         idle: 10000
     }
 };
-
-export const redisConfig = {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
-    db: parseInt(process.env.REDIS_DB || '0')
-}; 
