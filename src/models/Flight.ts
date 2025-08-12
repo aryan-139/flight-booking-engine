@@ -22,8 +22,11 @@ export interface CreateFlightRequest {
     destination: string;
     departure_time: Date;
     arrival_time: Date;
+    duration: number; // in minutes
     price: number;
+    seats_available: number;
     cabin_class: string;
+    created_at?: string; // Optional HH:mm:ss format
 }
 
 export interface UpdateFlightRequest {
