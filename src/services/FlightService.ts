@@ -26,4 +26,16 @@ export class FlightService {
         }
     }
 
+    public static async searchFlights(query: any): Promise<Flight[]> {
+        try {
+            const flights = await FlightDAL.searchFlights(query);
+            //whenever a search query is made, capture the ORIGIN, DESTINATION for analytics, reminders 
+            
+            return flights;
+        } catch (error: any) {
+            Logger.error('Failed to fetch flights', { error });
+            throw error;
+        }
+    }
+
 } 

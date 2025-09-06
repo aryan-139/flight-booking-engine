@@ -9,7 +9,7 @@ export const flightPayloadSchema = z.object({
   departure_time: z.string().datetime(),
   arrival_time: z.string().datetime(),
   duration: z.number().int().positive(),
-  price: z.coerce.number().min(0),
+  price: z.number().min(0),
   seats_available: z.number().int().min(0),
   total_seats: z.number().int().min(0),
   cabin_class: z.enum(['Economy', 'Premium Economy', 'Business', 'First'])
@@ -26,3 +26,29 @@ export const flightPayloadSchema = z.object({
 });
 
 export type FlightPayload = z.infer<typeof flightPayloadSchema>;
+
+export const flightSearchQuerySchema = z.object({
+  origin: z.string().regex(/^[A-Z]{3}$/, 'IATA code (AAA)'),
+  destination: z.string().regex(/^[A-Z]{3}$/, 'IATA code (AAA)'),
+  depart_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date format YYYY-MM-DD'),
+  return_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date format YYYY-MM-DD').optional(),
+  adults: z.string().transform(val => parseInt(val)).pipe(z.number().int().min(1).max(100)).optional(),
+  cabin: z.enum(['Economy', 'Premium Economy', 'Business', 'First']).optional(),
+  page_size: z.string().transform(val => parseInt(val)).pipe(z.number().int().min(1).max(100)).optional(),
+  page_number: z.string().transform(val => parseInt(val)).pipe(z.number().int().min(1).max(100)).optional()
+}).superRefine((v, ctx) => {
+  //handle error for when return date is before the depart date 
+  if (v.return_date && v.depart_date) {
+    const departDate = new Date(v.depart_date);
+    const returnDate = new Date(v.return_date);
+    if (returnDate <= departDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['return_date'],
+        message: 'return_date must be after depart_date'
+      });
+    }
+  }
+});
+
+export type FlightSearchQuery = z.infer<typeof flightSearchQuerySchema>;

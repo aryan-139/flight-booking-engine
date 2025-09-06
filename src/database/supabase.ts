@@ -74,38 +74,40 @@ class SupabaseConnection {
 
     public async query(table: string, query: any = {}) {
         try {
-            let queryBuilder = this.supabase.from(table);
-
-            // Apply filters
+            // Start the query builder chain with .select()
+            let queryBuilder = this.supabase
+                .from(table)
+                .select(query.select || '*');
+    
+            // Now, you can safely apply filters
             if (query.filters) {
                 Object.entries(query.filters).forEach(([key, value]) => {
-                    queryBuilder = queryBuilder.eq(key, value);
+                    queryBuilder = queryBuilder.eq(key, value as any);
                 });
             }
-
-            // Apply pagination
-            if (query.limit) {
-                queryBuilder = queryBuilder.limit(query.limit);
-            }
-
-            if (query.offset) {
-                queryBuilder = queryBuilder.range(query.offset, query.offset + (query.limit || 10) - 1);
-            }
-
+    
             // Apply ordering
             if (query.orderBy) {
                 queryBuilder = queryBuilder.order(query.orderBy.column, {
                     ascending: query.orderBy.ascending !== false
                 });
             }
-
-            const { data, error } = await queryBuilder.select(query.select || '*');
-
+    
+            // Apply pagination (limit and offset)
+            if (query.offset && query.limit) {
+                queryBuilder = queryBuilder.range(query.offset, query.offset + query.limit - 1);
+            } else if (query.limit) {
+                queryBuilder = queryBuilder.limit(query.limit);
+            }
+    
+            // Await the fully constructed query
+            const { data, error } = await queryBuilder;
+    
             if (error) {
                 Logger.error(`Supabase query failed for table ${table}`, { error });
                 throw error;
             }
-
+    
             return data;
         } catch (error) {
             Logger.error(`Supabase query failed for table ${table}`, { error });
@@ -167,6 +169,67 @@ class SupabaseConnection {
             return true;
         } catch (error) {
             Logger.error(`Supabase delete failed for table ${table}`, { error });
+            throw error;
+        }
+    }
+
+    /**
+     * Execute raw SQL queries using Supabase RPC
+     * @param sql - The SQL query string to execute
+     * @param params - Optional parameters for the SQL query
+     * @returns Query results
+     */
+    public async rawQuery(sql: string, params?: any[]) {
+        try {
+            Logger.info('Executing raw SQL query', { sql, params });
+
+            // Use Supabase's rpc method to execute raw SQL
+            const { data, error } = await this.supabase.rpc('execute_sql', {
+                query: sql,
+                parameters: params || []
+            });
+
+            if (error) {
+                Logger.error('Raw SQL query execution failed', { error, sql });
+                throw error;
+            }
+
+            Logger.info('Raw SQL query executed successfully', { rowCount: data?.length || 0 });
+            return data;
+        } catch (error) {
+            Logger.error('Raw SQL query execution failed', { error, sql });
+            throw error;
+        }
+    }
+
+    /**
+     * Execute a raw SQL query and return a single row
+     * @param sql - The SQL query string to execute
+     * @param params - Optional parameters for the SQL query
+     * @returns Single row result or null
+     */
+    public async rawQuerySingle(sql: string, params?: any[]) {
+        try {
+            const data = await this.rawQuery(sql, params);
+            return data && data.length > 0 ? data[0] : null;
+        } catch (error) {
+            Logger.error('Raw SQL single query execution failed', { error, sql });
+            throw error;
+        }
+    }
+
+    /**
+     * Execute a raw SQL query without expecting return data (for INSERT, UPDATE, DELETE)
+     * @param sql - The SQL query string to execute
+     * @param params - Optional parameters for the SQL query
+     * @returns Success boolean
+     */
+    public async rawExecute(sql: string, params?: any[]) {
+        try {
+            await this.rawQuery(sql, params);
+            return true;
+        } catch (error) {
+            Logger.error('Raw SQL execution failed', { error, sql });
             throw error;
         }
     }
