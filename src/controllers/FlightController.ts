@@ -17,4 +17,14 @@ export class FlightController {
             return ResponseHelper.error(res, error?.message || 'Unknown error', 400);
         }
     }
+
+    public static async getAllFlights(req: Request, res: Response): Promise<void> {
+        try {
+            const flights = await FlightService.getAllFlights();
+            ResponseHelper.success(res, flights, 'Flights fetched successfully', 200);
+        } catch (error: any) {
+            Logger.error('Failed to fetch flights', { error });
+            return ResponseHelper.error(res, error?.message || 'Unknown error', 400);
+        }
+    }
 } 

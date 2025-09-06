@@ -16,4 +16,14 @@ export class FlightService {
         }
     }
 
+    public static async getAllFlights(): Promise<Flight[]> {
+        try {
+            const flights = await FlightDAL.getAllFlights();
+            return flights;
+        } catch (error: any) {
+            Logger.error('Failed to fetch flights', { error });
+            throw error;
+        }
+    }
+
 } 

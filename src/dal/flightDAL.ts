@@ -7,7 +7,7 @@ export class FlightDAL {
 
     public static async createFlight(req: any): Promise<Flight> {
         try {
-            let flightData={
+            let flightData = {
                 flight_number: req.flight_number,
                 airline: req.airline,
                 origin: req.origin,
@@ -26,6 +26,16 @@ export class FlightDAL {
             return data;
         } catch (error: any) {
             Logger.error('Failed to create flight', { error });
+            throw error;
+        }
+    }
+
+    public static async getAllFlights(): Promise<Flight[]> {
+        try {
+            const data = await this.supabase.query('flights');
+            return data;
+        } catch (error: any) {
+            Logger.error('Failed to fetch flights', { error });
             throw error;
         }
     }
