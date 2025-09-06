@@ -11,8 +11,8 @@ export const flightPayloadSchema = z.object({
   duration: z.number().int().positive(),
   price: z.coerce.number().min(0),
   seats_available: z.number().int().min(0),
-  cabin_class: z.enum(['Economy', 'Premium Economy', 'Business', 'First']),
-  created_at: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, 'HH:mm:ss').optional()
+  total_seats: z.number().int().min(0),
+  cabin_class: z.enum(['Economy', 'Premium Economy', 'Business', 'First'])
 }).superRefine((v, ctx) => {
   const dep = new Date(v.departure_time).getTime();
   const arr = new Date(v.arrival_time).getTime();
