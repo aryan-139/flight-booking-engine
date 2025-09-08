@@ -119,3 +119,6 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## To Do 
+1. Dynamic Pricing Feature on Search Query Capture and Pub Sub Publishing 
+
