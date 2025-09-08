@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import adminRoutes from './admin';
 import flightRoutes from './flight';
+import passengerRoutes from './passenger';
 
 const router = Router();
 
 // API routes
 router.use('/api/admin', adminRoutes);
 router.use('/api/flight', flightRoutes);
+router.use('/api/passenger', passengerRoutes);
 
 // Root route
 router.get('/', (req, res) => {
