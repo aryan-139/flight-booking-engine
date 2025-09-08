@@ -52,4 +52,15 @@ export class FlightController {
             return ResponseHelper.error(res, error?.message || 'Unknown error', 400);
         }
     }
+
+    public static async getFlightById(req: Request, res: Response): Promise<void> {
+        try {
+            const flightId = req.params.flight_id;
+            const flight = await FlightService.getFlightById(flightId);
+            ResponseHelper.success(res, flight, 'Flight fetched successfully', 200);
+        } catch (error: any) {
+            Logger.error('Failed to fetch flight', { error });
+            return ResponseHelper.error(res, error?.message || 'Unknown error', 400);
+        }
+    }
 } 

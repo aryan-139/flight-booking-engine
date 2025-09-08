@@ -38,4 +38,14 @@ export class FlightService {
         }
     }
 
+    public static async getFlightById(flightId: string): Promise<Flight> {
+        try {
+            const flight = await FlightDAL.getFlightById(flightId);
+            return flight;
+        } catch (error: any) {
+            Logger.error('Failed to fetch flight', { error });
+            throw error;
+        }
+    }
+
 } 

@@ -86,4 +86,16 @@ export class FlightDAL {
             throw error;
         }
     }
+
+    public static async getFlightById(flightId: string): Promise<Flight> {
+        try {
+            const data = await this.supabase.query('flights', {
+                filters: { flight_id: flightId }
+            });
+            return data[0]; // Return the first (and should be only) result
+        } catch (error: any) {
+            Logger.error('Failed to fetch flight', { error });
+            throw error;
+        }
+    }
 }
