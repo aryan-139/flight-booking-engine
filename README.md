@@ -22,71 +22,6 @@ A comprehensive flight booking system with real-time flight tracking, dynamic pr
 - **Revenue Analytics**: Total revenue tracking and seat utilization
 - **Airline Integration**: Flight logos and airline information
 
-## 🗄️ Database Schema
-
-### Users Table
-```sql
-users (
-  id (Primary Key)
-  email
-  phone_no
-  address
-  payment_info
-)
-```
-
-### Flights Table
-```sql
-flights (
-  id (Primary Key)
-  flight_number
-  airline
-  origin
-  destination
-  departure_time
-  arrival_time
-  duration
-  price
-  seats_available
-  cabin_class
-  total_seats (default: 222 for Airbus)
-)
-```
-
-### Bookings Table
-```sql
-bookings (
-  id (Primary Key)
-  user_id (Foreign Key)
-  flight_id (Foreign Key)
-  booking_type (one-way, round-trip)
-  passengers_info (JSON)
-  status
-  total_price
-  booking_date
-)
-```
-
-### Passengers Table
-```sql
-passengers (
-  id (Primary Key)
-  booking_id (Foreign Key)
-  name
-  age
-  type (infant, child, adult)
-)
-```
-
-### Flight Status Updates Table
-```sql
-flight_status_updates (
-  flight_id (Foreign Key)
-  status (on-time, delayed)
-  updated_at
-)
-```
-
 ## 🛠️ Technical Implementation
 
 ### Data Management
@@ -152,21 +87,6 @@ npm run db:seed
 npm run dev
 ```
 
-## 📋 API Endpoints
-
-### Flight Search
-- `GET /api/flights/search` - Search flights with filters
-- `GET /api/flights/:id` - Get flight details
-- `GET /api/flights/status/:id` - Get live flight status
-
-### Booking Management
-- `POST /api/bookings` - Create new booking
-- `GET /api/bookings/:pnr` - Get booking by PNR
-- `PUT /api/bookings/:id` - Update booking
-
-### User Management
-- `POST /api/users` - Register user
-- `GET /api/users/:id/bookings` - Get user bookings
 
 ## 🚀 Deployment
 
@@ -191,13 +111,9 @@ RATE_LIMIT_MAX_REQUESTS=100
 - **Multi-language Support**: Internationalization
 - **Advanced Analytics**: Business intelligence dashboard
 
-## 🤝 Contributing
+## ETL script to explore the scraped flight data, transform it, load into the DB table for flights 
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+ [[https://colab.research.google.com/drive/1vvF7CLbO52rtkDvJ6kcZaMt_8Q0W25mh?usp=sharing]]
 
 ## 📄 License
 
