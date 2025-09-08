@@ -98,4 +98,20 @@ export class FlightDAL {
             throw error;
         }
     }
+
+    public static async updateFlight(flightId: string, updateData: any): Promise<Flight> {
+        try {
+            const data = {
+                ...updateData,
+                updated_at: new Date().toISOString()
+            };
+
+            // Update using flight_id as the primary key
+            const result = await this.supabase.updateByField('flights', 'flight_id', flightId, data);
+            return result;
+        } catch (error: any) {
+            Logger.error('Failed to update flight', { error });
+            throw error;
+        }
+    }
 }

@@ -78,36 +78,36 @@ class SupabaseConnection {
             let queryBuilder = this.supabase
                 .from(table)
                 .select(query.select || '*');
-    
+
             // Now, you can safely apply filters
             if (query.filters) {
                 Object.entries(query.filters).forEach(([key, value]) => {
                     queryBuilder = queryBuilder.eq(key, value as any);
                 });
             }
-    
+
             // Apply ordering
             if (query.orderBy) {
                 queryBuilder = queryBuilder.order(query.orderBy.column, {
                     ascending: query.orderBy.ascending !== false
                 });
             }
-    
+
             // Apply pagination (limit and offset)
             if (query.offset && query.limit) {
                 queryBuilder = queryBuilder.range(query.offset, query.offset + query.limit - 1);
             } else if (query.limit) {
                 queryBuilder = queryBuilder.limit(query.limit);
             }
-    
+
             // Await the fully constructed query
             const { data, error } = await queryBuilder;
-    
+
             if (error) {
                 Logger.error(`Supabase query failed for table ${table}`, { error });
                 throw error;
             }
-    
+
             return data;
         } catch (error) {
             Logger.error(`Supabase query failed for table ${table}`, { error });
@@ -154,12 +154,51 @@ class SupabaseConnection {
         }
     }
 
+    public async updateByField(table: string, field: string, value: string, data: any) {
+        try {
+            const { data: result, error } = await this.supabase
+                .from(table)
+                .update(data)
+                .eq(field, value)
+                .select();
+
+            if (error) {
+                Logger.error(`Supabase update failed for table ${table}`, { error });
+                throw error;
+            }
+
+            return result[0];
+        } catch (error) {
+            Logger.error(`Supabase update failed for table ${table}`, { error });
+            throw error;
+        }
+    }
+
     public async delete(table: string, id: string) {
         try {
             const { error } = await this.supabase
                 .from(table)
                 .delete()
                 .eq('id', id);
+
+            if (error) {
+                Logger.error(`Supabase delete failed for table ${table}`, { error });
+                throw error;
+            }
+
+            return true;
+        } catch (error) {
+            Logger.error(`Supabase delete failed for table ${table}`, { error });
+            throw error;
+        }
+    }
+
+    public async deleteByField(table: string, field: string, value: string) {
+        try {
+            const { error } = await this.supabase
+                .from(table)
+                .delete()
+                .eq(field, value);
 
             if (error) {
                 Logger.error(`Supabase delete failed for table ${table}`, { error });
