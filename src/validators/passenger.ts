@@ -22,6 +22,18 @@ export const createPassengerSchema = z.object({
         message: 'Type must be infant, child, or adult'
     }),
 
+    email_id: z.string()
+        .email('Invalid email format')
+        .optional(),
+
+    country_code: z.string()
+        .regex(/^\+\d{1,4}$/, 'Country code must start with + and contain 1-4 digits')
+        .optional(),
+
+    phone_number: z.string()
+        .regex(/^\d{10,15}$/, 'Phone number must contain 10-15 digits')
+        .optional(),
+
     user_id: z.string()
         .min(1, 'User ID is required')
 });
@@ -48,7 +60,22 @@ export const updatePassengerSchema = z.object({
 
     type: z.enum(['infant', 'child', 'adult'], {
         message: 'Type must be infant, child, or adult'
-    }).optional()
+    }).optional(),
+
+    email_id: z.string()
+        .min(1, 'Email is required')
+        .email('Invalid email format')
+        .optional(),
+
+    country_code: z.string()
+        .min(1, 'Country code is required')
+        .regex(/^\+\d{1,4}$/, 'Country code must start with + and contain 1-4 digits')
+        .optional(),
+
+    phone_number: z.string()
+        .min(1, 'Phone number is required')
+        .regex(/^\d{10,15}$/, 'Phone number must contain 10-15 digits')
+        .optional()
 });
 
 export const getPassengerByUserIdSchema = z.object({

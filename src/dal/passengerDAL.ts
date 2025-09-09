@@ -11,6 +11,9 @@ export class PassengerDAL {
                 name: passengerData.name,
                 dob: new Date(passengerData.dob).toISOString(),
                 type: passengerData.type,
+                email_id: passengerData.email_id,
+                country_code: passengerData.country_code,
+                phone_number: passengerData.phone_number,
                 user_id: passengerData.user_id,
                 created_at: new Date().toISOString()
             };
